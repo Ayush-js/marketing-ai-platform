@@ -29,6 +29,7 @@ export default function CampaignPlanner() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [expandedStep, setExpandedStep] = useState(null)
+  const [step, setStep] = useState(1)
 
   useEffect(() => {
     const saved = sessionStorage.getItem('lastContent')
@@ -50,6 +51,7 @@ export default function CampaignPlanner() {
         goal, generated_content: content, content_type: contentType
       })
       setResult(data)
+      setStep(2) // Move to step 2 after planning is successful
     } catch(e) {
       setError(e.response?.data?.detail || e.message || 'Planning failed')
     } finally {
@@ -70,143 +72,142 @@ export default function CampaignPlanner() {
           </div>
         </div>
 
-        <div className="planner-grid">
-          <div className="planner-inputs">
-            <div className="card">
-              <h2>Campaign Goal</h2>
-              <div className="form-group" style={{marginTop:14}}>
-                <label>What do you want to achieve?</label>
-                <textarea
-                  value={goal}
-                  onChange={e => setGoal(e.target.value)}
-                  placeholder="e.g. Launch a social media campaign for wireless headphones targeting Gen Z"
-                  rows={3}
-                />
-                <div className="examples-row" style={{marginTop:8}}>
-                  {EXAMPLE_GOALS.slice(0,2).map(g => (
-                    <button key={g} className="example-chip" onClick={() => setGoal(g)}>
-                      {g.slice(0,45)}...
-                    </button>
-                  ))}
+        <div className="planner-grid" style={{ display: 'block' }}>
+          {step === 1 && (
+            <div className="planner-inputs" style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <div className="card">
+                <h2>Step 1: Campaign Goal</h2>
+                <div className="form-group" style={{marginTop:14}}>
+                  <label>What do you want to achieve?</label>
+                  <textarea
+                    value={goal}
+                    onChange={e => setGoal(e.target.value)}
+                    placeholder="e.g. Launch a social media campaign for wireless headphones targeting Gen Z"
+                    rows={3}
+                  />
+                  <div className="examples-row" style={{marginTop:8}}>
+                    {EXAMPLE_GOALS.slice(0,2).map(g => (
+                      <button key={g} className="example-chip" onClick={() => setGoal(g)}>
+                        {g.slice(0,45)}...
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="form-group" style={{marginTop:16}}>
-                <label>Generated Content (from Content Studio)</label>
-                <textarea
-                  value={content}
-                  onChange={e => setContent(e.target.value)}
-                  placeholder="Paste your generated marketing content here, or use the Content Studio first..."
-                  rows={6}
-                />
-              </div>
-
-              <div className="form-group" style={{marginTop:12}}>
-                <label>Content Type</label>
-                <select value={contentType} onChange={e => setContentType(e.target.value)}>
-                  <option value="ad_copy">Ad Copy</option>
-                  <option value="social_post">Social Post</option>
-                  <option value="blog_post">Blog Post</option>
-                  <option value="email_campaign">Email Campaign</option>
-                  <option value="tagline">Tagline</option>
-                </select>
-              </div>
-
-              <button
-                className="btn btn-primary"
-                style={{width:'100%', justifyContent:'center', marginTop:16, padding:'12px'}}
-                onClick={handlePlan}
-                disabled={loading || !goal.trim() || !content.trim()}
-              >
-                {loading
-                  ? <><Loader2 size={16} className="spin" /> Agent is planning...</>
-                  : <><Sparkles size={16} /> Run Planner Agent</>
-                }
-              </button>
-              {error && <div className="error-box" style={{marginTop:12}}>{error}</div>}
-            </div>
-          </div>
-
-          <div className="planner-output">
-            {!result && !loading && (
-              <div className="empty-state card">
-                <Bot size={40} style={{color:'var(--text3)'}} />
-                <h3>Agent ready</h3>
-                <p>Set your goal and content, then run the planner agent</p>
-                <div className="agent-features">
-                  {['Checks budget & channels','Analyzes competitors','Schedules tasks','Estimates ROI'].map(f => (
-                    <span key={f} className="badge badge-accent" style={{margin:'3px'}}>{f}</span>
-                  ))}
+                <div className="form-group" style={{marginTop:16}}>
+                  <label>Generated Content (from Content Studio)</label>
+                  <textarea
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    placeholder="Paste your generated marketing content here, or use the Content Studio first..."
+                    rows={6}
+                  />
                 </div>
-              </div>
-            )}
 
-            {loading && (
-              <div className="agent-loading card">
-                <div className="agent-pulse"><Bot size={28} /></div>
-                <h3>Agent is working...</h3>
-                <p>The agent is using tools to build your campaign plan</p>
-                <div className="loading-tools">
-                  {Object.entries(TOOL_ICONS).map(([k,v]) => (
-                    <div key={k} className="loading-tool">
-                      <span>{v}</span>
-                      <span>{k.replace(/_/g,' ')}</span>
-                    </div>
-                  ))}
+                <div className="form-group" style={{marginTop:12}}>
+                  <label>Content Type</label>
+                  <select value={contentType} onChange={e => setContentType(e.target.value)}>
+                    <option value="ad_copy">Ad Copy</option>
+                    <option value="social_post">Social Post</option>
+                    <option value="blog_post">Blog Post</option>
+                    <option value="email_campaign">Email Campaign</option>
+                    <option value="tagline">Tagline</option>
+                  </select>
                 </div>
-                <p className="loading-note">This may take 30–60 seconds</p>
-              </div>
-            )}
 
-            {result && (
-              <div className="result-area slide-up">
-                {result.steps?.length > 0 && (
-                  <div className="card agent-steps">
-                    <h3><Wrench size={15}/> Agent Tool Usage ({result.steps.length} steps)</h3>
-                    <div className="steps-list">
-                      {result.steps.map((step, i) => (
-                        <div key={i} className="step-item">
-                          <div
-                            className="step-header"
-                            onClick={() => setExpandedStep(expandedStep === i ? null : i)}
-                          >
-                            <span className="step-icon">{TOOL_ICONS[step.tool] || '🔧'}</span>
-                            <span className="step-name">{step.tool.replace(/_/g,' ')}</span>
-                            <CheckCircle size={13} style={{color:'var(--green)', marginLeft:'auto'}} />
-                            {expandedStep === i ? <ChevronUp size={13}/> : <ChevronDown size={13}/>}
-                          </div>
-                          {expandedStep === i && (
-                            <div className="step-detail">
-                              <div className="step-io">
-                                <strong>Input:</strong>
-                                <pre>{step.input}</pre>
-                              </div>
-                              <div className="step-io">
-                                <strong>Output:</strong>
-                                <pre>{step.output}</pre>
-                              </div>
-                            </div>
-                          )}
+                <button
+                  className="btn btn-primary"
+                  style={{width:'100%', justifyContent:'center', marginTop:16, padding:'12px'}}
+                  onClick={handlePlan}
+                  disabled={loading || !goal.trim() || !content.trim()}
+                >
+                  {loading
+                    ? <><Loader2 size={16} className="spin" /> Agent is planning...</>
+                    : <><Sparkles size={16} /> Run Planner Agent & Next</>
+                  }
+                </button>
+                {error && <div className="error-box" style={{marginTop:12}}>{error}</div>}
+
+                {loading && (
+                  <div className="agent-loading card" style={{ marginTop: '20px' }}>
+                    <div className="agent-pulse"><Bot size={28} /></div>
+                    <h3>Agent is working...</h3>
+                    <p>The agent is using tools to build your campaign plan</p>
+                    <div className="loading-tools">
+                      {Object.entries(TOOL_ICONS).map(([k,v]) => (
+                        <div key={k} className="loading-tool">
+                          <span>{v}</span>
+                          <span>{k.replace(/_/g,' ')}</span>
                         </div>
                       ))}
                     </div>
+                    <p className="loading-note">This may take 30–60 seconds</p>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
 
-                <div className="card plan-output">
-                  <div className="plan-output-header">
-                    <Bot size={18} style={{color:'var(--accent2)'}} />
-                    <h3>Execution Plan</h3>
-                    <span className="badge badge-green">Complete</span>
-                  </div>
-                  <hr className="divider" />
-                  <div className="prose">
-                    <ReactMarkdown>{result.plan}</ReactMarkdown>
+          {step === 2 && (
+            <div className="planner-output" style={{ maxWidth: '800px', margin: '0 auto' }}>
+              <button 
+                className="btn btn-outline" 
+                onClick={() => setStep(1)}
+                style={{ marginBottom: '16px' }}
+              >
+                ← Back to Planner
+              </button>
+
+              {result && (
+                <div className="result-area slide-up">
+                  {result.steps?.length > 0 && (
+                    <div className="card agent-steps">
+                      <h3><Wrench size={15}/> Agent Tool Usage ({result.steps.length} steps)</h3>
+                      <div className="steps-list">
+                        {result.steps.map((stepItem, i) => (
+                          <div key={i} className="step-item">
+                            <div
+                              className="step-header"
+                              onClick={() => setExpandedStep(expandedStep === i ? null : i)}
+                            >
+                              <span className="step-icon">{TOOL_ICONS[stepItem.tool] || '🔧'}</span>
+                              <span className="step-name">{stepItem.tool.replace(/_/g,' ')}</span>
+                              <CheckCircle size={13} style={{color:'var(--green)', marginLeft:'auto'}} />
+                              {expandedStep === i ? <ChevronUp size={13}/> : <ChevronDown size={13}/>}
+                            </div>
+                            {expandedStep === i && (
+                              <div className="step-detail">
+                                <div className="step-io">
+                                  <strong>Input:</strong>
+                                  <pre>{stepItem.input}</pre>
+                                </div>
+                                <div className="step-io">
+                                  <strong>Output:</strong>
+                                  <pre>{stepItem.output}</pre>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="card plan-output">
+                    <div className="plan-output-header">
+                      <Bot size={18} style={{color:'var(--accent2)'}} />
+                      <h3>Execution Plan</h3>
+                      <span className="badge badge-green">Complete</span>
+                    </div>
+                    <hr className="divider" />
+                    <div className="prose">
+                      <ReactMarkdown>{result.plan}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,11 +1,11 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0a0a0f;
-  --bg2: #111118;
-  --bg3: #16161f;
-  --surface: #1c1c28;
-  --surface2: #232334;
+  --bg: #1c133a;
+  --bg2: #24194c;
+  --bg3: #2a1b5c;
+  --surface: #2b1d5c;
+  --surface2: #362572;
   --border: rgba(255,255,255,0.07);
   --border2: rgba(255,255,255,0.12);
   --accent: #7c6af7;
@@ -160,3 +160,59 @@ label {
 .prose em { color: var(--accent2); font-style: italic; }
 .prose hr { border-color: var(--border); margin: 16px 0; }
 .prose code { background: var(--bg3); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--cyan); }
+
+/* Animated Background Orbs */
+.app-bg-shapes {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg);
+}
+
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: float 20s infinite alternate ease-in-out;
+}
+
+.shape-1 {
+  width: 400px; height: 400px;
+  background: #f5cf65; /* Yellow */
+  top: -100px; left: -100px;
+  animation-duration: 25s;
+}
+
+.shape-2 {
+  width: 500px; height: 500px;
+  background: #b886ff; /* Purple */
+  top: 20%; right: -150px;
+  animation-duration: 22s;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 350px; height: 350px;
+  background: #00d2ff; /* Cyan */
+  bottom: -50px; right: 10%;
+  animation-duration: 28s;
+  animation-delay: -10s;
+}
+
+.shape-4 {
+  width: 450px; height: 450px;
+  background: #ff5e7e; /* Magenta/Red */
+  bottom: -150px; left: 5%;
+  animation-duration: 20s;
+  animation-delay: -15s;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(40px, 40px) scale(1.05); }
+}

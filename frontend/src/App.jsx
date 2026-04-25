@@ -10,6 +10,14 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app">
+        {/* Global animated background */}
+        <div className="app-bg-shapes">
+          <div className="bg-shape shape-1"></div>
+          <div className="bg-shape shape-2"></div>
+          <div className="bg-shape shape-3"></div>
+          <div className="bg-shape shape-4"></div>
+        </div>
+        
         <Navbar />
         <main className="main-content">
           <Routes>

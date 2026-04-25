@@ -9,14 +9,6 @@ const STATS = [
   { icon: Target, label: 'Image Gen', value: 'Free', sub: 'Pollinations.ai', color: 'var(--amber)' },
 ]
 
-const TECH_STACK = [
-  { layer: 'Frontend', items: ['React 18 + Vite', 'React Router', 'Axios', 'React Markdown'], color: 'var(--accent)' },
-  { layer: 'GenAI', items: ['Groq API', 'LLaMA 3.3 70B', 'Pollinations.ai', 'ChromaDB'], color: 'var(--cyan)' },
-  { layer: 'Agentic AI', items: ['LangChain', 'CrewAI', 'Tool Calling', '6 Mock Tools'], color: 'var(--green)' },
-  { layer: 'Backend', items: ['FastAPI', 'Uvicorn', 'Pydantic', 'Python 3.11'], color: 'var(--amber)' },
-  { layer: 'DevOps', items: ['Docker', 'Docker Compose', 'GitHub Actions', 'Multi-stage build'], color: '#f472b6' },
-]
-
 export default function Dashboard() {
   const nav = useNavigate()
   return (
@@ -56,43 +48,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="tech-section">
-        <h2>Tech Stack</h2>
-        <div className="tech-grid">
-          {TECH_STACK.map((layer, i) => (
-            <div key={i} className="tech-layer card card-sm">
-              <div className="tech-layer-header" style={{borderColor: layer.color}}>
-                <span style={{color: layer.color, fontWeight:700, fontSize:13, fontFamily:'var(--font-display)'}}>{layer.layer}</span>
-              </div>
-              <ul>
-                {layer.items.map(item => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="pipeline-section card">
-        <h2>CI/CD Pipeline</h2>
-        <div className="pipeline-steps">
-          {[
-            { label: 'Push Code', sub: 'git push origin main', icon: '📤' },
-            { label: 'Lint & Test', sub: 'ESLint + Pytest', icon: '✅' },
-            { label: 'Docker Build', sub: 'Multi-stage builds', icon: '🐳' },
-            { label: 'Push Image', sub: 'Docker Hub registry', icon: '📦' },
-            { label: 'Deploy', sub: 'Docker Compose / K8s', icon: '🚀' },
-          ].map((s, i) => (
-            <div key={i} className="pipe-step">
-              <span className="pipe-icon">{s.icon}</span>
-              <strong>{s.label}</strong>
-              <span>{s.sub}</span>
-              {i < 4 && <span className="pipe-arrow">→</span>}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }
