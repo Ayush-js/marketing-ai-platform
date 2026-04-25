@@ -158,12 +158,18 @@ export default function ContentStudio() {
 
             {result.image_url && (
               <div className="result-image card card-sm">
-                {!imgLoaded && <div className="skeleton" style={{height:220, borderRadius:8}} />}
+                {!imgLoaded && (
+                  <div className="skeleton" style={{height:220, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                    <span style={{color:'var(--text3)', fontSize:13}}>Generating image... (may take 20-30s)</span>
+                  </div>
+                )}
                 <img
                   src={result.image_url}
                   alt="Generated marketing visual"
                   onLoad={() => setImgLoaded(true)}
+                  onError={(e) => { e.target.style.display='none'; setImgLoaded(true); }}
                   style={{display: imgLoaded ? 'block' : 'none', borderRadius:8, width:'100%'}}
+                  referrerPolicy="no-referrer"
                 />
                 {result.image_prompt && (
                   <p className="img-caption"><Image size={12}/> {result.image_prompt.slice(0,120)}...</p>
