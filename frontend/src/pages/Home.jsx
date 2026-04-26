@@ -7,16 +7,16 @@ export default function Home() {
   return (
     <div className="home">
       <div className="home-hero">
-        <div className="hero-badge badge badge-accent">
+        {/* <div className="hero-badge badge badge-accent">
           <Sparkles size={12} /> Powered by Groq + Pollinations.ai
-        </div>
+        </div> */}
         <h1 className="hero-title">
           Marketing Intelligence<br />
           <span className="hero-accent">Amplified by AI</span>
         </h1>
         <p className="hero-sub">
           Generate world-class marketing content with GenAI, then let your Agentic
-          AI planner orchestrate the entire campaign — automatically.
+          AI planner orchestrate the entire campaign automatically.
         </p>
         <div className="hero-actions">
           <button className="btn btn-primary" onClick={() => nav('/studio')}>

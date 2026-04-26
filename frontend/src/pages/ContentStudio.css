@@ -11,12 +11,12 @@
   .studio { grid-template-columns: 1fr; }
 }
 
-.studio-header { margin-bottom: 20px; }
+.studio-header { margin-bottom: 24px; }
 .studio-header h1 {
-  font-family: var(--font-display); font-size: 1.8rem;
-  font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px;
+  font-family: var(--font-display); font-size: 2rem;
+  font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px;
 }
-.studio-header p { color: var(--text2); font-size: 14px; }
+.studio-header p { color: var(--text2); font-size: 14px; max-width: 56ch; }
 
 .studio-form { display: flex; flex-direction: column; gap: 18px; }
 
@@ -28,11 +28,11 @@
 }
 .example-chip {
   padding: 4px 10px; border-radius: 20px;
-  background: var(--bg3); border: 1px solid var(--border2);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
   font-size: 12px; color: var(--text2); cursor: pointer;
   transition: var(--transition); font-family: var(--font-body);
 }
-.example-chip:hover { background: var(--surface2); color: var(--text); }
+.example-chip:hover { background: rgba(255,255,255,0.1); color: var(--text); border-color: var(--border2); }
 
 .toggle-row {
   display: flex; align-items: center; justify-content: space-between;
