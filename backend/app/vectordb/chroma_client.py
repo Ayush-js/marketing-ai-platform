@@ -4,13 +4,16 @@ import chromadb
 _client = None
 _collection = None
 
-CHROMA_PERSIST_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "chroma_data")
+_DEFAULT_CHROMA_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "..", "chroma_data"
+)
+CHROMA_PERSIST_DIR = os.environ.get("CHROMA_PERSIST_DIR", os.path.abspath(_DEFAULT_CHROMA_DIR))
 
 def get_chroma_client():
-    """Get or create the shared persistent ChromaDB client."""
     global _client
     if _client is None:
-        _client = chromadb.PersistentClient(path=os.path.abspath(CHROMA_PERSIST_DIR))
+        os.makedirs(CHROMA_PERSIST_DIR, exist_ok=True)
+        _client = chromadb.PersistentClient(path=CHROMA_PERSIST_DIR)
     return _client
 
 def get_collection():

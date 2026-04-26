@@ -30,6 +30,7 @@ services:
       - GROQ_API_KEY=${GROQ_API_KEY}
       - HF_API_TOKEN=${HF_API_TOKEN}
       - PYTHONUNBUFFERED=1
+      - CHROMA_PERSIST_DIR=/app/chroma_data
     volumes:
       - chroma_data:/app/chroma_data
     healthcheck:
