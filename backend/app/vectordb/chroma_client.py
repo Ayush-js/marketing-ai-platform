@@ -1,14 +1,23 @@
+import os
 import chromadb
-from chromadb.config import Settings
 
 _client = None
 _collection = None
 
-def get_collection():
-    global _client, _collection
+CHROMA_PERSIST_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "chroma_data")
+
+def get_chroma_client():
+    """Get or create the shared persistent ChromaDB client."""
+    global _client
     if _client is None:
-        _client = chromadb.Client(Settings(anonymized_telemetry=False))
-        _collection = _client.get_or_create_collection(
+        _client = chromadb.PersistentClient(path=os.path.abspath(CHROMA_PERSIST_DIR))
+    return _client
+
+def get_collection():
+    global _collection
+    if _collection is None:
+        client = get_chroma_client()
+        _collection = client.get_or_create_collection(
             name="brand_voice",
             metadata={"description": "Brand voice and past marketing content"}
         )

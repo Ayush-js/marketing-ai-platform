@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from app.agents.planner_agent import run_planner_agent
+from app.vectordb.history_store import save_campaign_session
 
 router = APIRouter()
 
@@ -30,6 +31,15 @@ async def create_campaign_plan(req: PlanRequest):
             generated_content=req.generated_content,
             content_type=req.content_type
         )
+
+        # Save to history for user access
+        save_campaign_session(
+            goal=result["goal"],
+            content_type=result["content_type"],
+            plan=result["plan"],
+            steps=[{"tool": s["tool"], "input": s["input"], "output": s["output"]} for s in result["steps"]],
+        )
+
         return PlanResponse(
             plan=result["plan"],
             steps=[ToolStep(**s) for s in result["steps"]],

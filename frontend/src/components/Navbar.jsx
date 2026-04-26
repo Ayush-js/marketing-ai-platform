@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Zap, FileText, Map, LayoutDashboard } from 'lucide-react'
+import { Zap, FileText, Map, LayoutDashboard, Clock } from 'lucide-react'
 import './Navbar.css'
 
 export default function Navbar() {
@@ -22,7 +22,12 @@ export default function Navbar() {
           <LayoutDashboard size={15} />
           Dashboard
         </NavLink>
+        <NavLink to="/history" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
+          <Clock size={15} />
+          History
+        </NavLink>
       </div>
     </nav>
   )
 }
+

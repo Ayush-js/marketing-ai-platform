@@ -20,4 +20,17 @@ export const createCampaignPlan = (data) =>
 export const getExampleGoals = () =>
   api.get('/agentic/goals/examples').then(r => r.data)
 
+// ── History API ──────────────────────────────────────────────
+export const getHistory = (type = 'all', limit = 50) =>
+  api.get('/history/sessions', { params: { type, limit } }).then(r => r.data)
+
+export const searchHistory = (query, type = 'all', limit = 10) =>
+  api.get('/history/search', { params: { q: query, type, limit } }).then(r => r.data)
+
+export const getSessionById = (id, type = 'all') =>
+  api.get(`/history/sessions/${id}`, { params: { type } }).then(r => r.data)
+
+export const deleteSession = (id, type = 'all') =>
+  api.delete(`/history/sessions/${id}`, { params: { type } }).then(r => r.data)
+
 export default api

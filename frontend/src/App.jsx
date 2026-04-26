@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import ContentStudio from './pages/ContentStudio'
 import CampaignPlanner from './pages/CampaignPlanner'
 import Dashboard from './pages/Dashboard'
+import ChatHistory from './pages/ChatHistory'
 import './App.css'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/studio" element={<ContentStudio />} />
             <Route path="/planner" element={<CampaignPlanner />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/history" element={<ChatHistory />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import genai, agentic
+from app.routes import genai, agentic, history
 
 app = FastAPI(
     title="Marketing AI Platform API",
@@ -18,6 +18,7 @@ app.add_middleware(
 
 app.include_router(genai.router, prefix="/api/genai", tags=["GenAI"])
 app.include_router(agentic.router, prefix="/api/agentic", tags=["Agentic"])
+app.include_router(history.router, prefix="/api/history", tags=["History"])
 
 @app.get("/")
 def root():

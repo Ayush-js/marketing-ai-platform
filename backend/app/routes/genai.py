@@ -5,6 +5,7 @@ import uuid
 from app.genai.content_gen import generate_text_content, generate_image_prompt, CONTENT_TYPES
 from app.genai.image_gen import get_marketing_image, get_banner_image
 from app.vectordb.chroma_client import add_content
+from app.vectordb.history_store import save_content_session
 
 router = APIRouter()
 
@@ -46,6 +47,18 @@ async def generate_content(req: ContentRequest):
             content_id=f"gen_{content_id}",
             content=text[:500],
             metadata={"type": req.content_type, "topic": req.topic, "tone": req.tone}
+        )
+
+        # Save to history for user access
+        save_content_session(
+            topic=req.topic,
+            content_type=req.content_type,
+            tone=req.tone,
+            text_content=text,
+            image_url=image_url,
+            banner_url=banner_url,
+            image_prompt=img_prompt,
+            content_id=content_id,
         )
 
         return ContentResponse(
