@@ -50,7 +50,7 @@
 }
 .history-search input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-glow), 0 8px 32px rgba(124,106,247,0.15);
+  box-shadow: 0 0 0 4px var(--accent-glow), 0 8px 32px rgba(245, 158, 11, 0.15);
 }
 .history-search input::placeholder {
   color: var(--text3);
@@ -118,7 +118,7 @@
   font-weight: 600;
 }
 .filter-tab.active .filter-count {
-  background: rgba(124,106,247,0.3);
+  background: rgba(245, 158, 11, 0.3);
 }
 
 /* Results Info */
@@ -162,7 +162,7 @@
 }
 .session-card.expanded {
   border-color: var(--accent);
-  box-shadow: 0 16px 48px rgba(133,118,255,0.2), 0 0 0 1px var(--accent);
+  box-shadow: 0 16px 48px rgba(245, 158, 11, 0.2), 0 0 0 1px var(--accent);
 }
 
 .session-card-header {
@@ -182,7 +182,7 @@
   flex-shrink: 0;
 }
 .session-type-icon.content {
-  background: rgba(124,106,247,0.15);
+  background: rgba(245, 158, 11, 0.15);
   color: var(--accent2);
 }
 .session-type-icon.campaign {

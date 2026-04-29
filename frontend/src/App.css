@@ -1,2 +1,40 @@
 .app { min-height: 100vh; display: flex; flex-direction: column; }
-.main-content { flex: 1; }
+.main-content { flex: 1; position: relative; overflow: hidden; }
+.navbar,
+.main-content {
+  position: relative;
+  z-index: 2;
+}
+
+.route-viewport {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.route-page {
+  width: 100%;
+  min-height: 100%;
+}
+
+.cursor-aura {
+  position: fixed;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+  transition: opacity 0.28s ease, transform 0.22s ease;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(circle, rgba(255, 200, 110, 0.24) 0%, rgba(245, 158, 11, 0.12) 32%, rgba(245, 158, 11, 0.04) 58%, rgba(245, 158, 11, 0) 75%);
+  filter: blur(0.4px) saturate(120%);
+}
+
+.cursor-aura.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}

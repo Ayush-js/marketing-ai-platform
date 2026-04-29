@@ -3,7 +3,7 @@
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 30px; height: 68px;
   background:
-    linear-gradient(180deg, rgba(23,16,49,0.78) 0%, rgba(18,13,40,0.68) 100%);
+    linear-gradient(180deg, rgba(15,8,0,0.78) 0%, rgba(10,5,0,0.68) 100%);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255,255,255,0.14);
@@ -42,8 +42,8 @@
   border-color: rgba(255,255,255,0.12);
 }
 .nav-link.active {
-  color: #efeafe;
-  background: linear-gradient(135deg, rgba(133, 118, 255, 0.5) 0%, rgba(114, 93, 239, 0.42) 100%);
-  border-color: rgba(193, 182, 255, 0.55);
-  box-shadow: 0 8px 24px rgba(106, 84, 227, 0.35);
+  color: #fffbeb;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.5) 0%, rgba(217, 119, 6, 0.42) 100%);
+  border-color: rgba(252, 211, 77, 0.55);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
 }

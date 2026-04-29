@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Zap, FileText, Map, ArrowRight, Sparkles, Bot, Cpu } from 'lucide-react'
+import { ArrowRight, Bot, Cpu, FileText, LayoutDashboard } from 'lucide-react'
 import './Home.css'
 
 export default function Home() {
@@ -7,34 +7,32 @@ export default function Home() {
   return (
     <div className="home">
       <div className="home-hero">
-        {/* <div className="hero-badge badge badge-accent">
-          <Sparkles size={12} /> Powered by Groq + Pollinations.ai
-        </div> */}
-        <h1 className="hero-title">
+        <h1 className="hero-title reveal-heading">
           Marketing Intelligence<br />
           <span className="hero-accent">Amplified by AI</span>
         </h1>
-        <p className="hero-sub">
+        <p className="hero-sub reveal-sub">
           Generate world-class marketing content with GenAI, then let your Agentic
           AI planner orchestrate the entire campaign automatically.
         </p>
-        <div className="hero-actions">
-          <button className="btn btn-primary" onClick={() => nav('/studio')}>
+        <div className="hero-actions reveal-cta">
+          <button className="btn btn-primary home-cta-btn" onClick={() => nav('/studio')}>
             Start Creating <ArrowRight size={16} />
           </button>
-          <button className="btn btn-ghost" onClick={() => nav('/dashboard')}>
+          <button className="btn btn-ghost home-cta-btn" onClick={() => nav('/dashboard')}>
+            <LayoutDashboard size={16} />
             View Dashboard
           </button>
         </div>
       </div>
 
-      <div className="home-features">
+      <div className="home-features reveal-features">
         <div className="feature-card card" onClick={() => nav('/studio')}>
-          <div className="feature-icon" style={{background:'rgba(124,106,247,0.15)', color:'var(--accent2)'}}>
+          <div className="feature-icon" style={{background:'var(--accent-glow)', color:'var(--accent2)'}}>
             <FileText size={22} />
           </div>
           <h3>Content Studio</h3>
-          <p>Generate ad copy, taglines, blog posts, social posts & emails — with AI images — in seconds.</p>
+          <p>Generate ad copy, taglines, blog posts, social posts & emails with AI images in seconds.</p>
           <span className="feature-tag">GenAI · Groq LLaMA 3.3</span>
         </div>
         <div className="feature-card card" onClick={() => nav('/planner')}>
@@ -75,6 +73,7 @@ export default function Home() {
           ))}
         </div>
       </div>
+
     </div>
   )
 }

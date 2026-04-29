@@ -1,15 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import { Loader2, Sparkles, Image, Copy, Check, ArrowRight, RefreshCw } from 'lucide-react'
+import { Loader2, Sparkles, Image, Copy, Check, ArrowRight, RefreshCw, ChevronDown } from 'lucide-react'
 import { generateContent, getContentTypes, getTones } from '../utils/api'
 import './ContentStudio.css'
 
-const TONES = ['energetic','professional','playful','luxury','urgent','inspirational','friendly','authoritative']
-const CONTENT_LABELS = {
-  ad_copy: 'Ad Copy', tagline: 'Taglines', blog_post: 'Blog Post',
-  social_post: 'Social Posts', email_campaign: 'Email Campaign'
-}
+const CONTENT_TYPES = [
+  { value: 'ad_copy', label: 'Ad Copy' },
+  { value: 'social_post', label: 'Social Post' },
+  { value: 'blog_post', label: 'Blog Post', },
+  { value: 'email_campaign', label: 'Email Campaign' },
+  { value: 'tagline', label: 'Tagline' }
+]
+
+const TONE_OPTIONS = [
+  { value: 'energetic', label: 'Energetic' },
+  { value: 'professional', label: 'Professional' },
+  { value: 'playful', label: 'Playful' },
+  { value: 'luxury', label: 'Luxury' },
+  { value: 'urgent', label: 'Urgent' },
+  { value: 'inspirational', label: 'Inspirational' },
+  { value: 'friendly', label: 'Friendly' },
+  { value: 'authoritative', label: 'Authoritative' }
+]
+
+const CONTENT_LABELS = CONTENT_TYPES.reduce((acc, curr) => ({ ...acc, [curr.value]: curr.label }), {})
+
 const EXAMPLES = [
   'Wireless noise-cancelling headphones for students',
   'Organic skincare line for working professionals',
@@ -17,6 +33,56 @@ const EXAMPLES = [
   'Premium coffee subscription service',
   'Sustainable running shoes for Gen Z',
 ]
+
+function CustomDropdown({ options, value, onChange, label }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const selectedOption = options.find(opt => opt.value === value)
+
+  return (
+    <div className="custom-dropdown-container" ref={dropdownRef}>
+      <label className="dropdown-label">{label}</label>
+      <div
+        className={`custom-dropdown-trigger ${isOpen ? 'active' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="dropdown-selected">
+          {selectedOption?.label} <span className="dropdown-emoji">{selectedOption?.emoji}</span>
+        </span>
+        <ChevronDown size={16} className={`dropdown-chevron ${isOpen ? 'open' : ''}`} />
+      </div>
+
+      {isOpen && (
+        <div className="custom-dropdown-menu">
+          {options.map((opt) => (
+            <div
+              key={opt.value}
+              className={`dropdown-item ${opt.value === value ? 'selected' : ''}`}
+              onClick={() => { onChange(opt.value); setIsOpen(false); }}
+            >
+              <span className="item-label">
+                {opt.label} <span className="item-emoji">{opt.emoji}</span>
+              </span>
+              {opt.value === value && <Check size={16} className="item-check" />}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 
 export default function ContentStudio() {
   const [topic, setTopic] = useState('')
@@ -38,7 +104,7 @@ export default function ContentStudio() {
       setResult(data)
       // Save to session for planner
       sessionStorage.setItem('lastContent', JSON.stringify(data))
-    } catch(e) {
+    } catch (e) {
       setError(e.response?.data?.detail || e.message || 'Generation failed')
     } finally {
       setLoading(false)
@@ -73,31 +139,29 @@ export default function ContentStudio() {
               onKeyDown={e => e.key === 'Enter' && handleGenerate()}
             />
             <div className="examples-row">
-              {EXAMPLES.slice(0,3).map(ex => (
+              {EXAMPLES.slice(0, 3).map(ex => (
                 <button key={ex} className="example-chip" onClick={() => setTopic(ex)}>{ex}</button>
               ))}
             </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Content Type</label>
-              <select value={contentType} onChange={e => setContentType(e.target.value)}>
-                {Object.entries(CONTENT_LABELS).map(([k,v]) => (
-                  <option key={k} value={k}>{v}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Tone</label>
-              <select value={tone} onChange={e => setTone(e.target.value)}>
-                {TONES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase()+t.slice(1)}</option>)}
-              </select>
-            </div>
+            <CustomDropdown
+              label="Content Type"
+              options={CONTENT_TYPES}
+              value={contentType}
+              onChange={setContentType}
+            />
+            <CustomDropdown
+              label="Tone"
+              options={TONE_OPTIONS}
+              value={tone}
+              onChange={setTone}
+            />
           </div>
 
           <div className="toggle-row">
-            <label htmlFor="img-toggle" style={{textTransform:'none', fontSize:'14px', color:'var(--text2)', cursor:'pointer'}}>
+            <label htmlFor="img-toggle" style={{ textTransform: 'none', fontSize: '14px', color: 'var(--text2)', cursor: 'pointer' }}>
               Include AI image (via Pollinations.ai)
             </label>
             <div className="toggle-wrap">
@@ -133,7 +197,7 @@ export default function ContentStudio() {
 
         {loading && (
           <div className="loading-state card">
-            <Loader2 size={32} className="spin" style={{color:'var(--accent)'}} />
+            <Loader2 size={32} className="spin" style={{ color: 'var(--accent)' }} />
             <p>Generating content with Groq LLaMA 3.3...</p>
             <span className="text3">This may take 10–20 seconds</span>
           </div>
@@ -144,14 +208,14 @@ export default function ContentStudio() {
             <div className="result-header card card-sm">
               <div>
                 <span className="badge badge-accent">{CONTENT_LABELS[result.content_type]}</span>
-                <span className="badge badge-green" style={{marginLeft:8}}>{tone}</span>
+                <span className="badge badge-green" style={{ marginLeft: 8 }}>{tone}</span>
               </div>
-              <div style={{display:'flex',gap:8}}>
-                <button className="btn btn-ghost" style={{padding:'6px 12px',fontSize:'13px'}} onClick={handleCopy}>
-                  {copied ? <><Check size={14}/> Copied</> : <><Copy size={14}/> Copy</>}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: '13px' }} onClick={handleCopy}>
+                  {copied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
                 </button>
-                <button className="btn btn-ghost" style={{padding:'6px 12px',fontSize:'13px'}} onClick={handleGenerate}>
-                  <RefreshCw size={14}/> Regenerate
+                <button className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: '13px' }} onClick={handleGenerate}>
+                  <RefreshCw size={14} /> Regenerate
                 </button>
               </div>
             </div>
@@ -159,20 +223,20 @@ export default function ContentStudio() {
             {result.image_url && (
               <div className="result-image card card-sm">
                 {!imgLoaded && (
-                  <div className="skeleton" style={{height:220, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center'}}>
-                    <span style={{color:'var(--text3)', fontSize:13}}>Generating image... (may take 20-30s)</span>
+                  <div className="skeleton" style={{ height: 220, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: 'var(--text3)', fontSize: 13 }}>Generating image... (may take 20-30s)</span>
                   </div>
                 )}
                 <img
                   src={result.image_url}
                   alt="Generated marketing visual"
                   onLoad={() => setImgLoaded(true)}
-                  onError={(e) => { e.target.style.display='none'; setImgLoaded(true); }}
-                  style={{display: imgLoaded ? 'block' : 'none', borderRadius:8, width:'100%'}}
+                  onError={(e) => { e.target.style.display = 'none'; setImgLoaded(true); }}
+                  style={{ display: imgLoaded ? 'block' : 'none', borderRadius: 8, width: '100%' }}
                   referrerPolicy="no-referrer"
                 />
                 {result.image_prompt && (
-                  <p className="img-caption"><Image size={12}/> {result.image_prompt.slice(0,120)}...</p>
+                  <p className="img-caption"><Image size={12} /> {result.image_prompt.slice(0, 120)}...</p>
                 )}
               </div>
             )}
@@ -184,7 +248,7 @@ export default function ContentStudio() {
             </div>
 
             <button className="btn btn-primary plan-btn" onClick={handlePlanCampaign}>
-              Plan Campaign with AI Agent <ArrowRight size={16}/>
+              Plan Campaign with AI Agent <ArrowRight size={16} />
             </button>
           </div>
         )}
