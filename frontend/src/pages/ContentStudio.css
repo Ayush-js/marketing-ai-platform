@@ -6,6 +6,10 @@
   margin: 0 auto;
   padding: 32px 24px 60px;
   align-items: start;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.16));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(2px);
 }
 @media (max-width: 900px) {
   .studio { grid-template-columns: 1fr; }
@@ -15,8 +19,9 @@
 .studio-header h1 {
   font-family: var(--font-display); font-size: 2rem;
   font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px;
+  text-shadow: 0 8px 28px rgba(0, 0, 0, 0.72);
 }
-.studio-header p { color: var(--text2); font-size: 14px; max-width: 56ch; }
+.studio-header p { color: var(--text2); font-size: 14px; max-width: 56ch; text-shadow: 0 4px 18px rgba(0, 0, 0, 0.64); }
 
 .studio-form { display: flex; flex-direction: column; gap: 18px; }
 

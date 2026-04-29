@@ -14,6 +14,7 @@ const ParticleSwarm = () => {
   const target = useMemo(() => new THREE.Vector3(), []);
   const pColor = useMemo(() => new THREE.Color(), []);
   const color = pColor; // Alias for user code compatibility
+  const mouseWorldPos = useMemo(() => new THREE.Vector3(9999, 9999, 9999), []);
   
   const positions = useMemo(() => {
      const pos = [];
@@ -36,6 +37,14 @@ const ParticleSwarm = () => {
     if (!meshRef.current) return;
     const time = state.clock.getElapsedTime() * speedMult;
     const THREE_LIB = THREE;
+
+    // Track mouse in 3D space
+    mouseWorldPos.set(state.pointer.x, state.pointer.y, 0.5);
+    mouseWorldPos.unproject(state.camera);
+    const dir = mouseWorldPos.sub(state.camera.position).normalize();
+    const distance = -state.camera.position.z / dir.z;
+    mouseWorldPos.copy(state.camera.position).add(dir.multiplyScalar(distance));
+
 
     if(material.uniforms && material.uniforms.uTime) {
          material.uniforms.uTime.value = time;
@@ -103,6 +112,29 @@ const ParticleSwarm = () => {
         // 5. Final Target Assignment
         target.set(px, py, pz);
         
+        // --- Cursor Ripple Effect ---
+        const dxMouse = px - mouseWorldPos.x;
+        const dyMouse = py - mouseWorldPos.y;
+        const distMouseSq = dxMouse * dxMouse + dyMouse * dyMouse;
+        const rippleRadius = 30.0;
+        
+        let cursorGlow = 0;
+        if (distMouseSq < rippleRadius * rippleRadius && distMouseSq > 0) {
+            const distMouse = Math.sqrt(distMouseSq);
+            const nd = distMouse / rippleRadius;
+            const falloff = (Math.cos(nd * Math.PI) + 1.0) * 0.5; // Smooth falloff
+            
+            // Ripple wave based on distance and time
+            const wave = Math.sin(distMouse * 1.5 - time * 12.0) * 5.0 * falloff;
+            
+            // Apply displacement to Z and slightly repel in X/Y
+            target.z += wave;
+            target.x += (dxMouse / distMouse) * wave * 0.6;
+            target.y += (dyMouse / distMouse) * wave * 0.6;
+            
+            cursorGlow = falloff * 0.5; // Add extra brightness
+        }
+        
         // --- Shading & Energy Logic ---
         
         // Find the closest singularity to determine local energy
@@ -116,7 +148,7 @@ const ParticleSwarm = () => {
         // Core: White/Cyan | Mid: Electric Blue | Outer: Deep Purple
         let hue = (0.62 - energy * 0.35 + 1.0) % 1.0;
         let sat = 0.5 + 0.5 * energy;
-        let light = energy * 1.5 * horizon;
+        let light = energy * 1.5 * horizon + cursorGlow;
         
         color.setHSL(hue, sat, Math.min(light, 1.0));
         
@@ -147,7 +179,7 @@ export default function ParticleBackground() {
       <Canvas camera={{ position: [0, 0, 100], fov: 60 }}>
         <fog attach="fog" args={['#000000', 0.01]} />
         <ParticleSwarm />
-        <OrbitControls autoRotate={true} enableZoom={false} enablePan={false} />
+        <OrbitControls autoRotate={true} enableZoom={false} enablePan={false} enableRotate={false} />
         <Effects disableGamma>
             <unrealBloomPass threshold={0} strength={1.8} radius={0.4} />
         </Effects>
