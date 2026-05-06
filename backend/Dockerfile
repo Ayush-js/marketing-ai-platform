@@ -10,11 +10,31 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --prefix=/install --no-cache-dir -r requirements.txt
 
+# Write warmup script to a file to avoid Dockerfile parse issues
+RUN echo 'import sys' > /warmup.py && \
+    echo 'sys.path.insert(0, "/install/lib/python3.11/site-packages")' >> /warmup.py && \
+    echo 'import chromadb' >> /warmup.py && \
+    echo 'client = chromadb.Client()' >> /warmup.py && \
+    echo 'col = client.get_or_create_collection("warmup")' >> /warmup.py && \
+    echo 'col.add(ids=["1"], documents=["warmup"])' >> /warmup.py && \
+    echo 'col.query(query_texts=["warmup"], n_results=1)' >> /warmup.py && \
+    echo 'print("Model downloaded successfully")' >> /warmup.py
+
+# Pre-download the ChromaDB ONNX embedding model at build time
+RUN mkdir -p /root/.cache/chroma && \
+    PYTHONPATH=/install/lib/python3.11/site-packages \
+    HF_HOME=/root/.cache \
+    CHROMA_CACHE_DIR=/root/.cache/chroma \
+    python /warmup.py
+
 FROM python:3.11-slim AS runtime
 
 WORKDIR /app
 
 COPY --from=builder /install /usr/local
+
+# Copy the pre-downloaded model from builder into the runtime image
+COPY --from=builder /root/.cache /app/.cache
 
 COPY app/ ./app/
 
